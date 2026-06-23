@@ -4,8 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Share2, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { createOrder, getDesign } from "@/lib/data.functions";
 import { CaseSilhouette } from "@/components/CaseSilhouette";
 import { CaseArtwork } from "@/components/CaseArtwork";
 import { Button } from "@/components/ui/button";
@@ -26,34 +25,24 @@ function PreviewPage() {
   const { id } = Route.useSearch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
   const [view, setView] = useState<View>("back");
 
   const { data, isLoading } = useQuery({
     queryKey: ["design", id],
     enabled: Boolean(id),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("designs")
-        .select("id, name, phone_model, design_json")
-        .eq("id", id!)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () => getDesign({ data: { id: id! } }),
   });
 
   const order = useMutation({
     mutationFn: async () => {
-      if (!user || !data) throw new Error("Not ready");
-      const { error } = await supabase.from("orders").insert({
-        user_id: user.id,
-        design_id: data.id,
-        phone_model: data.phone_model,
-        status: "pending",
-        price_cents: CASE_BASE_PRICE_CENTS,
+      if (!data) throw new Error("Not ready");
+      await createOrder({
+        data: {
+          design_id: data.id,
+          phone_model: data.phone_model,
+          price_cents: CASE_BASE_PRICE_CENTS,
+        },
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });

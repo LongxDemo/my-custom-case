@@ -1,6 +1,21 @@
--- CaseCraft application tables on Cloudflare D1 (SQLite).
--- Better Auth manages its own tables (user, session, account, verification)
--- via its CLI-generated migration; these are the app-domain tables.
+-- CaseCraft tables on Cloudflare D1 (SQLite). Idempotent (IF NOT EXISTS).
+
+-- Auth: users + sessions (direct-on-D1 email/password auth).
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  email TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  display_name TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions (user_id);
 
 CREATE TABLE IF NOT EXISTS designs (
   id TEXT PRIMARY KEY,

@@ -20,9 +20,11 @@ interface D1ApiResponse<T> {
 }
 
 function d1Config() {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const databaseId = process.env.D1_DATABASE_ID;
-  const token = process.env.CLOUDFLARE_API_TOKEN;
+  // Trim — secrets uploaded via shell pipes can pick up a trailing newline,
+  // which would corrupt the URL or the Bearer token.
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
+  const databaseId = process.env.D1_DATABASE_ID?.trim();
+  const token = process.env.CLOUDFLARE_API_TOKEN?.trim();
   if (!accountId || !databaseId || !token) {
     const missing = [
       ...(!accountId ? ["CLOUDFLARE_ACCOUNT_ID"] : []),

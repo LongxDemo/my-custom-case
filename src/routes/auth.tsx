@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { signIn, signUp } from "@/lib/auth.functions";
 import { CaseLogo } from "@/components/CaseLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { refresh } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
@@ -27,20 +29,13 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: { display_name: displayName || email.split("@")[0] },
-          },
-        });
-        if (error) throw error;
+        await signUp({ data: { email, password, displayName: displayName || undefined } });
+        await refresh();
         toast.success("Account created! You're all set.");
         navigate({ to: "/designs" });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        await signIn({ data: { email, password } });
+        await refresh();
         toast.success("Welcome back!");
         navigate({ to: "/designs" });
       }

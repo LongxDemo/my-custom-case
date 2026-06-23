@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Package } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { CaseSilhouette } from "@/components/CaseSilhouette";
 import { CaseArtwork } from "@/components/CaseArtwork";
@@ -10,22 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getModel, parseDesign } from "@/lib/studio";
+import { listOrders, type OrderRecord } from "@/lib/data.functions";
 
 export const Route = createFileRoute("/_authenticated/orders")({
   component: OrdersPage,
 });
 
-interface OrderRow {
-  id: string;
-  phone_model: string | null;
-  status: string;
-  price_cents: number | null;
-  created_at: string;
-  designs:
-    | { name: string | null; design_json: unknown }
-    | { name: string | null; design_json: unknown }[]
-    | null;
-}
+type OrderRow = OrderRecord;
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   pending: { label: "In production", className: "bg-amber-100 text-amber-700" },
@@ -40,14 +30,7 @@ function OrdersPage() {
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ["orders"],
-    queryFn: async (): Promise<OrderRow[]> => {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("id, phone_model, status, price_cents, created_at, designs(name, design_json)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as OrderRow[];
-    },
+    queryFn: async (): Promise<OrderRow[]> => (await listOrders()) as OrderRow[],
   });
 
   return (
@@ -79,8 +62,7 @@ function OrdersPage() {
 }
 
 function OrderCard({ order }: { order: OrderRow }) {
-  const designRel = Array.isArray(order.designs) ? order.designs[0] : order.designs;
-  const design = designRel ? parseDesign(designRel.design_json) : null;
+  const design = order.design_json ? parseDesign(order.design_json) : null;
   const ratio = design ? getModel(design.modelId).ratio : 0.49;
   const status = STATUS_STYLES[order.status] ?? {
     label: order.status,
@@ -101,7 +83,7 @@ function OrderCard({ order }: { order: OrderRow }) {
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-foreground">
-          {designRel?.name ?? "Custom case"}
+          {order.design_name ?? "Custom case"}
         </p>
         <p className="truncate text-xs text-muted-foreground">
           {order.phone_model ?? "Phone case"}

@@ -1,44 +1,50 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { getMe, signOut as signOutFn } from "@/lib/auth.functions";
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  display_name: string | null;
+}
 
 interface AuthContextValue {
-  user: User | null;
-  session: Session | null;
+  user: AuthUser | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  /** Re-read the session from the server (call after sign in/up). */
+  refresh: () => Promise<AuthUser | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const refresh = async (): Promise<AuthUser | null> => {
+    try {
+      const me = await getMe();
+      setUser(me);
+      return me;
+    } catch {
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Register the listener first, then hydrate the existing session.
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => sub.subscription.unsubscribe();
+    void refresh();
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await signOutFn();
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signOut, refresh }}>
       {children}
     </AuthContext.Provider>
   );

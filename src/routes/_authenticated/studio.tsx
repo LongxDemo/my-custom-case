@@ -17,9 +17,7 @@ import {
   Undo2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
-import { useAuth } from "@/hooks/useAuth";
+import { createOrder, getDesign, saveDesign } from "@/lib/data.functions";
 import { CaseSilhouette } from "@/components/CaseSilhouette";
 import { CaseArtwork } from "@/components/CaseArtwork";
 import { Button } from "@/components/ui/button";
@@ -123,7 +121,6 @@ function StudioPage() {
   const { id, model: modelIdParam, template: templateParam } = Route.useSearch();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   const [hist, dispatch] = useReducer(historyReducer, undefined, () => {
     const present = initialDesign(modelIdParam, templateParam);
@@ -177,15 +174,7 @@ function StudioPage() {
   const { data: existing } = useQuery({
     queryKey: ["design", id],
     enabled: Boolean(id),
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("designs")
-        .select("id, name, design_json")
-        .eq("id", id!)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: async () => getDesign({ data: { id: id! } }),
   });
 
   useEffect(() => {
@@ -347,25 +336,16 @@ function StudioPage() {
   // --- Persistence ---
   const saveMutation = useMutation({
     mutationFn: async (): Promise<string> => {
-      if (!user) throw new Error("Not signed in");
-      const payload = {
-        user_id: user.id,
-        name: name.trim() || "Untitled design",
-        phone_model: model.label,
-        platform: model.platform,
-        design_json: JSON.parse(JSON.stringify(design)) as Json,
-      };
-      if (designId) {
-        const { error } = await supabase
-          .from("designs")
-          .update({ ...payload, updated_at: new Date().toISOString() })
-          .eq("id", designId);
-        if (error) throw error;
-        return designId;
-      }
-      const { data, error } = await supabase.from("designs").insert(payload).select("id").single();
-      if (error) throw error;
-      return data.id;
+      const { id: savedId } = await saveDesign({
+        data: {
+          id: designId,
+          name: name.trim() || "Untitled design",
+          phone_model: model.label,
+          platform: model.platform,
+          design: JSON.parse(JSON.stringify(design)),
+        },
+      });
+      return savedId;
     },
     onSuccess: (savedId) => {
       setDesignId(savedId);
@@ -394,16 +374,14 @@ function StudioPage() {
 
   const orderMutation = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error("Not signed in");
       const savedId = await saveMutation.mutateAsync();
-      const { error } = await supabase.from("orders").insert({
-        user_id: user.id,
-        design_id: savedId,
-        phone_model: model.label,
-        status: "pending",
-        price_cents: CASE_BASE_PRICE_CENTS,
+      await createOrder({
+        data: {
+          design_id: savedId,
+          phone_model: model.label,
+          price_cents: CASE_BASE_PRICE_CENTS,
+        },
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });

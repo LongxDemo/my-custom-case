@@ -3,8 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, ShoppingBag, Sparkles, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { createOrder, deleteDesign, listDesigns } from "@/lib/data.functions";
 import { AppShell } from "@/components/AppShell";
 import { CaseSilhouette } from "@/components/CaseSilhouette";
 import { CaseArtwork } from "@/components/CaseArtwork";
@@ -38,26 +37,17 @@ interface DesignRow {
 function DesignsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
   const [pendingDelete, setPendingDelete] = useState<DesignRow | null>(null);
   const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   const { data: designs, isLoading } = useQuery({
     queryKey: ["designs"],
-    queryFn: async (): Promise<DesignRow[]> => {
-      const { data, error } = await supabase
-        .from("designs")
-        .select("id, name, phone_model, platform, design_json, created_at")
-        .order("updated_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as DesignRow[];
-    },
+    queryFn: async (): Promise<DesignRow[]> => (await listDesigns()) as DesignRow[],
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("designs").delete().eq("id", id);
-      if (error) throw error;
+      await deleteDesign({ data: { id } });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["designs"] });
@@ -69,15 +59,13 @@ function DesignsPage() {
 
   const reorderMutation = useMutation({
     mutationFn: async (design: DesignRow) => {
-      if (!user) throw new Error("Not signed in");
-      const { error } = await supabase.from("orders").insert({
-        user_id: user.id,
-        design_id: design.id,
-        phone_model: design.phone_model,
-        status: "pending",
-        price_cents: CASE_BASE_PRICE_CENTS,
+      await createOrder({
+        data: {
+          design_id: design.id,
+          phone_model: design.phone_model,
+          price_cents: CASE_BASE_PRICE_CENTS,
+        },
       });
-      if (error) throw error;
     },
     onMutate: (design) => setReorderingId(design.id),
     onSuccess: () => {
