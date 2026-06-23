@@ -12,4 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force the nitro deploy build (Cloudflare Workers, `cloudflare-module` preset) to run
+  // outside the Lovable sandbox too — needed so `bun run build` / Cloudflare CI emits a worker.
+  nitro: true,
 });
