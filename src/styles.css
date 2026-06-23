@@ -1,0 +1,131 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * CaseCraft design system.
+ * Warm-neutral canvas, white surfaces, ink text, a single electric-violet accent.
+ * All brand colors live here as semantic tokens — never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+
+  --color-violet-soft: var(--violet-soft);
+
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 1rem;
+
+  --background: #f6f4ef;
+  --foreground: #2a2a28;
+
+  --card: #ffffff;
+  --card-foreground: #2a2a28;
+
+  --popover: #ffffff;
+  --popover-foreground: #2a2a28;
+
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+
+  --secondary: #ffffff;
+  --secondary-foreground: #2a2a28;
+
+  --muted: #efece5;
+  --muted-foreground: #7a776f;
+
+  --accent: #f1ebfd;
+  --accent-foreground: #7c3aed;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e7e3da;
+  --input: #e7e3da;
+  --ring: #7c3aed;
+
+  --violet-soft: #f1ebfd;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: #ece8df;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Phone-style frame that centers the app on larger screens */
+@utility phone-frame {
+  width: 100%;
+  height: 100dvh;
+  background-color: var(--color-background);
+  overflow: hidden;
+  position: relative;
+
+  @media (min-width: 480px) {
+    width: 390px;
+    height: min(844px, 94vh);
+    border-radius: 2.75rem;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 24px 60px -20px rgb(42 42 40 / 0.25);
+  }
+}
+
+/* Hide scrollbars inside scroll areas for a cleaner app feel */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
