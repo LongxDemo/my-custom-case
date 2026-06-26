@@ -449,7 +449,7 @@ function StudioPage() {
 
       {/* Canvas */}
       <div
-        className="flex flex-1 items-center justify-center overflow-hidden px-8 py-4"
+        className="flex min-h-0 flex-1 items-center justify-center overflow-hidden px-8 py-4"
         onPointerMove={onCanvasPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
@@ -552,7 +552,7 @@ function SelectedLayerBar({
   // Photos can be enlarged far past the case for full-bleed / zoomed-in looks.
   const sizeMax = layer.type === "image" ? 10 : 3;
   return (
-    <div className="shrink-0 border-t border-border bg-violet-soft/60 px-4 py-3">
+    <div className="no-scrollbar max-h-[44vh] shrink-0 overflow-y-auto border-t border-border bg-violet-soft/60 px-4 py-3">
       {layer.type === "text" && (
         <div className="mb-3 space-y-2">
           <Input
