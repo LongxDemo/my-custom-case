@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy --compatibility-date 2026-06-25"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
