@@ -104,11 +104,7 @@ function SelectDevicePage() {
                     isSel ? "border-primary bg-primary/5" : "border-border bg-card",
                   )}
                 >
-                  <CaseSilhouette
-                    ratio={m.ratio}
-                    className="h-12 w-auto shrink-0"
-                    showCamera={false}
-                  >
+                  <CaseSilhouette ratio={m.ratio} className="h-12 w-auto shrink-0" camera="none">
                     <div
                       className="absolute inset-0"
                       style={{ background: PLATFORM_TINT[m.platform] }}

@@ -40,12 +40,17 @@ export const signUp = createServerFn({ method: "POST" })
     const id = crypto.randomUUID();
     const displayName = data.displayName?.trim() || email.split("@")[0];
     const passwordHash = await hashPassword(data.password);
+
+    // Bootstrap: the first account ever created becomes the back-office admin.
+    const count = await d1First<{ n: number }>("SELECT COUNT(*) AS n FROM users");
+    const isAdmin = (count?.n ?? 0) === 0 ? 1 : 0;
+
     await d1Query(
-      "INSERT INTO users (id, email, password_hash, display_name) VALUES (?, ?, ?, ?)",
-      [id, email, passwordHash, displayName],
+      "INSERT INTO users (id, email, password_hash, display_name, is_admin) VALUES (?, ?, ?, ?, ?)",
+      [id, email, passwordHash, displayName, isAdmin],
     );
     setSessionCookie(await createSession(id));
-    return { id, email, display_name: displayName };
+    return { id, email, display_name: displayName, is_admin: isAdmin };
   });
 
 export const signIn = createServerFn({ method: "POST" })
@@ -57,12 +62,15 @@ export const signIn = createServerFn({ method: "POST" })
       email: string;
       password_hash: string;
       display_name: string | null;
-    }>("SELECT id, email, password_hash, display_name FROM users WHERE email = ?", [email]);
+      is_admin: number;
+    }>("SELECT id, email, password_hash, display_name, is_admin FROM users WHERE email = ?", [
+      email,
+    ]);
     if (!row || !(await verifyPassword(data.password, row.password_hash))) {
       throw new Error("Invalid email or password.");
     }
     setSessionCookie(await createSession(row.id));
-    return { id: row.id, email: row.email, display_name: row.display_name };
+    return { id: row.id, email: row.email, display_name: row.display_name, is_admin: row.is_admin };
   });
 
 export const signOut = createServerFn({ method: "POST" }).handler(async () => {

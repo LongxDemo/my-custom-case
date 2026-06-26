@@ -1,6 +1,14 @@
 import { forwardRef, type CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Camera rendering mode:
+ *  - "lenses": full camera module with lenses + flash (a finished device look)
+ *  - "blank":  the same camera-shaped area but empty — a plain cutout/reserved zone
+ *  - "none":   no camera at all (used by tiny status thumbnails)
+ */
+export type CameraMode = "lenses" | "blank" | "none";
+
 interface CaseSilhouetteProps {
   className?: string;
   style?: CSSProperties;
@@ -8,8 +16,8 @@ interface CaseSilhouetteProps {
   ratio?: number;
   /** the printed artwork shown on the back of the case (rendered full-bleed) */
   children?: React.ReactNode;
-  /** show the camera module on the back */
-  showCamera?: boolean;
+  /** how the camera area is drawn on the back (default "lenses") */
+  camera?: CameraMode;
   /** render an empty, dashed "placeholder" case instead of a finished device */
   dashed?: boolean;
 }
@@ -23,7 +31,7 @@ interface CaseSilhouetteProps {
  */
 export const CaseSilhouette = forwardRef<HTMLDivElement, CaseSilhouetteProps>(
   function CaseSilhouette(
-    { className, style, ratio = 0.48, children, showCamera = true, dashed = false },
+    { className, style, ratio = 0.48, children, camera = "lenses", dashed = false },
     ref,
   ) {
     return (
@@ -35,20 +43,20 @@ export const CaseSilhouette = forwardRef<HTMLDivElement, CaseSilhouetteProps>(
           ...style,
         }}
       >
-        {/* Side buttons */}
+        {/* Side buttons (back view: power on the left, volume pair on the right) */}
         <span
           aria-hidden
-          className="absolute -left-[2px] top-[22%] h-[7%] w-[3px] rounded-l-sm"
+          className="absolute -right-[2px] top-[22%] h-[7%] w-[3px] rounded-r-sm"
           style={{ background: "linear-gradient(180deg,#3a3a40,#1b1b1f)" }}
         />
         <span
           aria-hidden
-          className="absolute -left-[2px] top-[33%] h-[11%] w-[3px] rounded-l-sm"
+          className="absolute -right-[2px] top-[33%] h-[11%] w-[3px] rounded-r-sm"
           style={{ background: "linear-gradient(180deg,#3a3a40,#1b1b1f)" }}
         />
         <span
           aria-hidden
-          className="absolute -right-[2px] top-[27%] h-[14%] w-[3px] rounded-r-sm"
+          className="absolute -left-[2px] top-[27%] h-[14%] w-[3px] rounded-l-sm"
           style={{ background: "linear-gradient(180deg,#3a3a40,#1b1b1f)" }}
         />
 
@@ -92,14 +100,30 @@ export const CaseSilhouette = forwardRef<HTMLDivElement, CaseSilhouetteProps>(
           </div>
 
           {/* Camera island */}
-          {showCamera && <CameraIsland />}
+          {camera !== "none" && <CameraIsland blank={camera === "blank"} />}
         </div>
       </div>
     );
   },
 );
 
-function CameraIsland() {
+function CameraIsland({ blank = false }: { blank?: boolean }) {
+  // "Blank" keeps the camera footprint but leaves it empty — a plain cutout
+  // shape with a soft recessed edge, no lenses or flash.
+  if (blank) {
+    return (
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[8%] top-[5%] aspect-square w-[34%] rounded-[26%]"
+        style={{
+          // Solid, opaque blank fill so artwork never shows through the cutout.
+          background: "linear-gradient(150deg,#ededf2,#d7d7df)",
+          boxShadow:
+            "inset 0 0 0 1px rgba(0,0,0,0.12), inset 0 2px 5px rgba(0,0,0,0.20), 0 1px 1px rgba(255,255,255,0.5)",
+        }}
+      />
+    );
+  }
   return (
     <div
       className="pointer-events-none absolute left-[8%] top-[5%] grid aspect-square w-[34%] grid-cols-2 grid-rows-2 place-items-center gap-[6%] rounded-[26%] p-[7%]"

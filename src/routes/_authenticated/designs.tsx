@@ -162,7 +162,11 @@ function DesignCard({
           className="flex w-full items-center justify-center rounded-xl bg-muted/40 px-2 py-3"
           aria-label={`Edit ${design.name}`}
         >
-          <CaseSilhouette ratio={ratio} className="w-[78%]">
+          <CaseSilhouette
+            ratio={ratio}
+            camera={state.showCamera ? "lenses" : "blank"}
+            className="w-[78%]"
+          >
             <CaseArtwork design={state} />
           </CaseSilhouette>
         </button>
@@ -204,7 +208,7 @@ function DesignCard({
 function EmptyState({ onStart }: { onStart: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center px-4 pt-16 text-center">
-      <CaseSilhouette className="w-36" ratio={0.5} dashed showCamera={false}>
+      <CaseSilhouette className="w-36" ratio={0.5} dashed camera="none">
         <Sparkles className="absolute inset-0 m-auto h-8 w-8 text-muted-foreground/50" />
       </CaseSilhouette>
       <p className="mt-6 text-base font-semibold text-foreground">

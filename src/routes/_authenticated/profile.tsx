@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LogOut } from "lucide-react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { LogOut, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { AppShell } from "@/components/AppShell";
@@ -51,10 +51,20 @@ function ProfilePage() {
         </div>
       </div>
 
+      {user?.is_admin ? (
+        <Link
+          to="/admin"
+          className="mt-8 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-sm font-semibold text-foreground"
+        >
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          Admin dashboard
+        </Link>
+      ) : null}
+
       <Button
         variant="outline"
         size="xl"
-        className="mt-8 gap-2 text-destructive"
+        className="mt-4 gap-2 text-destructive"
         onClick={handleSignOut}
       >
         <LogOut className="h-4 w-4" />

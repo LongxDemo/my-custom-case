@@ -77,7 +77,7 @@ function OrderCard({ order }: { order: OrderRow }) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
       <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-xl bg-muted/40">
-        <CaseSilhouette ratio={ratio} className="w-12" showCamera={false}>
+        <CaseSilhouette ratio={ratio} className="w-12" camera="none">
           {design ? <CaseArtwork design={design} /> : <div className="absolute inset-0 bg-muted" />}
         </CaseSilhouette>
       </div>

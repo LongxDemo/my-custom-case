@@ -23,6 +23,7 @@ import { CaseArtwork } from "@/components/CaseArtwork";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   CASE_BASE_PRICE_CENTS,
@@ -456,6 +457,7 @@ function StudioPage() {
         <CaseSilhouette
           ref={canvasRef}
           ratio={model.ratio}
+          camera={design.showCamera ? "lenses" : "blank"}
           className="max-h-full"
           style={{ width: "min(62vw, 230px)" }}
         >
@@ -500,7 +502,12 @@ function StudioPage() {
           {TOOLS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
-              onClick={() => setTool(key)}
+              onClick={() => {
+                // Switching tools is a context change — close the selected-layer
+                // editor so only the chosen tool's panel is visible.
+                setSelectedId(null);
+                setTool(key);
+              }}
               className={cn(
                 "flex flex-col items-center gap-1 py-2 text-[11px] font-medium transition-colors",
                 tool === key ? "text-primary" : "text-muted-foreground",
@@ -573,25 +580,28 @@ function SelectedLayerBar({
             </div>
           </div>
           <div className="flex items-center gap-1.5">
-            {FONT_OPTIONS.map((f) => (
-              <button
-                key={f.id}
-                onClick={() => onUpdate({ fontId: f.id })}
-                style={{ fontFamily: f.family }}
-                className={cn(
-                  "rounded-lg border px-2.5 py-1 text-xs",
-                  layer.fontId === f.id
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card text-foreground",
-                )}
-              >
-                {f.label}
-              </button>
-            ))}
+            <div className="flex flex-1 gap-1.5 overflow-x-auto no-scrollbar">
+              {FONT_OPTIONS.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => onUpdate({ fontId: f.id })}
+                  style={{ fontFamily: f.family }}
+                  className={cn(
+                    "shrink-0 rounded-lg border px-2.5 py-1 text-xs",
+                    layer.fontId === f.id
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-card text-foreground",
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
             <Button
               size="icon-sm"
               variant={layer.bold ? "default" : "outline"}
               aria-label="Bold"
+              className="shrink-0"
               onClick={() => onUpdate({ bold: !layer.bold })}
             >
               <Bold className="h-4 w-4" />
@@ -704,6 +714,19 @@ function ToolPanel({
             </button>
           ))}
         </div>
+        <label className="mt-3 flex items-center justify-between rounded-xl border border-border bg-card px-3 py-2.5">
+          <span>
+            <span className="block text-sm font-semibold text-foreground">Camera lenses</span>
+            <span className="block text-[11px] text-muted-foreground">
+              Off leaves a blank camera-shaped cutout
+            </span>
+          </span>
+          <Switch
+            checked={design.showCamera}
+            onCheckedChange={(checked) => setDesign((d) => ({ ...d, showCamera: checked }))}
+            aria-label="Toggle camera lenses"
+          />
+        </label>
         <Button className="mt-3 rounded-xl" size="sm" onClick={onOrder} disabled={orderPending}>
           <ShoppingBag className="h-4 w-4" />
           {orderPending

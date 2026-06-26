@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   display_name TEXT,
+  -- 1 = back-office admin (sees /admin). The first user to ever sign up is
+  -- auto-promoted; promote others with: UPDATE users SET is_admin=1 WHERE email=?
+  is_admin INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

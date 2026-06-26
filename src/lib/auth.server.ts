@@ -55,6 +55,8 @@ export interface AuthUser {
   id: string;
   email: string;
   display_name: string | null;
+  /** 1 = back-office admin. Stored as SQLite integer (0/1). */
+  is_admin: number;
 }
 
 export const SESSION_COOKIE = "cc_session";
@@ -79,7 +81,7 @@ export async function deleteSession(token: string): Promise<void> {
 export async function getSessionUser(token: string | undefined): Promise<AuthUser | null> {
   if (!token) return null;
   return d1First<AuthUser>(
-    `SELECT u.id, u.email, u.display_name
+    `SELECT u.id, u.email, u.display_name, u.is_admin
        FROM sessions s JOIN users u ON u.id = s.user_id
       WHERE s.id = ? AND s.expires_at > datetime('now')`,
     [token],
@@ -95,5 +97,12 @@ export async function currentUser(): Promise<AuthUser | null> {
 export async function requireUser(): Promise<AuthUser> {
   const user = await currentUser();
   if (!user) throw new Error("Unauthorized");
+  return user;
+}
+
+/** Like requireUser but also requires the back-office admin flag. */
+export async function requireAdmin(): Promise<AuthUser> {
+  const user = await requireUser();
+  if (!user.is_admin) throw new Error("Forbidden");
   return user;
 }

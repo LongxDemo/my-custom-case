@@ -105,6 +105,7 @@ function PreviewPage() {
         ) : view === "back" ? (
           <CaseSilhouette
             ratio={model.ratio}
+            camera={design.showCamera ? "lenses" : "blank"}
             className="relative max-h-full"
             style={{ width: "min(62vw, 240px)" }}
           >
@@ -117,7 +118,7 @@ function PreviewPage() {
         {/* Corner thumbnail of their design */}
         {design && model && (
           <div className="absolute bottom-4 right-4 rounded-xl border border-white/15 bg-white/10 p-1.5 backdrop-blur">
-            <CaseSilhouette ratio={model.ratio} className="w-12" showCamera={false}>
+            <CaseSilhouette ratio={model.ratio} className="w-12" camera="none">
               <CaseArtwork design={design} />
             </CaseSilhouette>
           </div>

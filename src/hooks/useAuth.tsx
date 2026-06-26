@@ -5,6 +5,8 @@ export interface AuthUser {
   id: string;
   email: string;
   display_name: string | null;
+  /** 1 = back-office admin (can access /admin). */
+  is_admin: number;
 }
 
 interface AuthContextValue {

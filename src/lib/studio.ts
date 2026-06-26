@@ -13,6 +13,17 @@ export interface PhoneModel {
 }
 
 export const PHONE_MODELS: PhoneModel[] = [
+  // ---- Apple (newest first) ----
+  {
+    id: "iphone-16-pro-max",
+    label: "iPhone 16 Pro Max",
+    platform: "iOS",
+    size: '6.9"',
+    ratio: 0.47,
+  },
+  { id: "iphone-16-pro", label: "iPhone 16 Pro", platform: "iOS", size: '6.3"', ratio: 0.48 },
+  { id: "iphone-16-plus", label: "iPhone 16 Plus", platform: "iOS", size: '6.7"', ratio: 0.48 },
+  { id: "iphone-16", label: "iPhone 16", platform: "iOS", size: '6.1"', ratio: 0.49 },
   {
     id: "iphone-15-pro-max",
     label: "iPhone 15 Pro Max",
@@ -21,9 +32,33 @@ export const PHONE_MODELS: PhoneModel[] = [
     ratio: 0.48,
   },
   { id: "iphone-15-pro", label: "iPhone 15 Pro", platform: "iOS", size: '6.1"', ratio: 0.49 },
+  { id: "iphone-15-plus", label: "iPhone 15 Plus", platform: "iOS", size: '6.7"', ratio: 0.48 },
   { id: "iphone-15", label: "iPhone 15", platform: "iOS", size: '6.1"', ratio: 0.49 },
+  {
+    id: "iphone-14-pro-max",
+    label: "iPhone 14 Pro Max",
+    platform: "iOS",
+    size: '6.7"',
+    ratio: 0.48,
+  },
+  { id: "iphone-14-pro", label: "iPhone 14 Pro", platform: "iOS", size: '6.1"', ratio: 0.49 },
+  { id: "iphone-14-plus", label: "iPhone 14 Plus", platform: "iOS", size: '6.7"', ratio: 0.48 },
   { id: "iphone-14", label: "iPhone 14", platform: "iOS", size: '6.1"', ratio: 0.49 },
+  { id: "iphone-13", label: "iPhone 13", platform: "iOS", size: '6.1"', ratio: 0.49 },
+  { id: "iphone-13-mini", label: "iPhone 13 mini", platform: "iOS", size: '5.4"', ratio: 0.49 },
+  { id: "iphone-12", label: "iPhone 12", platform: "iOS", size: '6.1"', ratio: 0.49 },
   { id: "iphone-se", label: "iPhone SE", platform: "iOS", size: '4.7"', ratio: 0.5 },
+
+  // ---- Samsung Galaxy ----
+  {
+    id: "galaxy-s25-ultra",
+    label: "Galaxy S25 Ultra",
+    platform: "Android",
+    size: '6.9"',
+    ratio: 0.46,
+  },
+  { id: "galaxy-s25-plus", label: "Galaxy S25+", platform: "Android", size: '6.7"', ratio: 0.47 },
+  { id: "galaxy-s25", label: "Galaxy S25", platform: "Android", size: '6.2"', ratio: 0.47 },
   {
     id: "galaxy-s24-ultra",
     label: "Galaxy S24 Ultra",
@@ -32,13 +67,50 @@ export const PHONE_MODELS: PhoneModel[] = [
     ratio: 0.46,
   },
   { id: "galaxy-s24", label: "Galaxy S24", platform: "Android", size: '6.2"', ratio: 0.47 },
+  {
+    id: "galaxy-s23-ultra",
+    label: "Galaxy S23 Ultra",
+    platform: "Android",
+    size: '6.8"',
+    ratio: 0.46,
+  },
   { id: "galaxy-s23", label: "Galaxy S23", platform: "Android", size: '6.1"', ratio: 0.47 },
+  { id: "galaxy-a55", label: "Galaxy A55", platform: "Android", size: '6.6"', ratio: 0.47 },
+  { id: "galaxy-a35", label: "Galaxy A35", platform: "Android", size: '6.6"', ratio: 0.47 },
+
+  // ---- Google Pixel ----
+  { id: "pixel-9-pro-xl", label: "Pixel 9 Pro XL", platform: "Android", size: '6.8"', ratio: 0.46 },
+  { id: "pixel-9-pro", label: "Pixel 9 Pro", platform: "Android", size: '6.3"', ratio: 0.47 },
+  { id: "pixel-9", label: "Pixel 9", platform: "Android", size: '6.3"', ratio: 0.47 },
   { id: "pixel-8-pro", label: "Pixel 8 Pro", platform: "Android", size: '6.7"', ratio: 0.47 },
   { id: "pixel-8", label: "Pixel 8", platform: "Android", size: '6.2"', ratio: 0.48 },
+  { id: "pixel-7a", label: "Pixel 7a", platform: "Android", size: '6.1"', ratio: 0.48 },
+
+  // ---- OnePlus ----
   { id: "oneplus-12", label: "OnePlus 12", platform: "Android", size: '6.8"', ratio: 0.46 },
+  { id: "oneplus-11", label: "OnePlus 11", platform: "Android", size: '6.7"', ratio: 0.46 },
+
+  // ---- Xiaomi ----
+  { id: "xiaomi-14", label: "Xiaomi 14", platform: "Android", size: '6.36"', ratio: 0.47 },
+  {
+    id: "redmi-note-13-pro",
+    label: "Redmi Note 13 Pro",
+    platform: "Android",
+    size: '6.67"',
+    ratio: 0.46,
+  },
+
+  // ---- Nothing ----
   {
     id: "nothing-phone-2",
     label: "Nothing Phone (2)",
+    platform: "Android",
+    size: '6.7"',
+    ratio: 0.47,
+  },
+  {
+    id: "nothing-phone-2a",
+    label: "Nothing Phone (2a)",
     platform: "Android",
     size: '6.7"',
     ratio: 0.47,
@@ -138,6 +210,14 @@ export const FONT_OPTIONS: FontOption[] = [
   { id: "serif", label: "Serif", family: 'Georgia, "Times New Roman", serif' },
   { id: "mono", label: "Mono", family: '"Courier New", ui-monospace, monospace' },
   { id: "rounded", label: "Round", family: '"Trebuchet MS", "Segoe UI", sans-serif' },
+  // Expressive web fonts (loaded via Google Fonts in __root.tsx).
+  { id: "poppins", label: "Poppins", family: '"Poppins", ui-sans-serif, sans-serif' },
+  { id: "anton", label: "Anton", family: '"Anton", Impact, sans-serif' },
+  { id: "playfair", label: "Playfair", family: '"Playfair Display", Georgia, serif' },
+  { id: "pacifico", label: "Pacifico", family: '"Pacifico", cursive' },
+  { id: "dancing", label: "Dancing", family: '"Dancing Script", cursive' },
+  { id: "fredoka", label: "Fredoka", family: '"Fredoka", "Trebuchet MS", sans-serif' },
+  { id: "lobster", label: "Lobster", family: '"Lobster", cursive' },
 ];
 
 export const TEXT_COLORS: string[] = [
@@ -192,6 +272,8 @@ export interface DesignState {
   modelId: string;
   background: Background;
   layers: Layer[];
+  /** Whether to show the camera cutout/module on the case mockup. */
+  showCamera: boolean;
 }
 
 export const CASE_BASE_PRICE_CENTS = 2499;
@@ -216,6 +298,7 @@ function tpl(background: Background, layers: LayerSpec[]): DesignState {
     modelId: DEFAULT_TEMPLATE_MODEL,
     background,
     layers: layers.map((l) => ({ ...l, id: uid() }) as Layer),
+    showCamera: true,
   };
 }
 
@@ -389,6 +472,7 @@ export function cloneDesign(design: DesignState): DesignState {
     modelId: design.modelId,
     background: { ...design.background },
     layers: design.layers.map((l) => ({ ...l, id: uid() }) as Layer),
+    showCamera: design.showCamera ?? true,
   };
 }
 
@@ -398,6 +482,7 @@ export function createDefaultDesign(modelId?: string): DesignState {
     modelId: PHONE_MODELS.find((m) => m.id === modelId)?.id ?? PHONE_MODELS[0].id,
     background: { type: "gradient", from: "#a78bfa", to: "#5b21b6", angle: 145 },
     layers: [],
+    showCamera: true,
   };
 }
 
@@ -421,6 +506,8 @@ export function parseDesign(raw: unknown): DesignState {
     modelId: typeof obj.modelId === "string" ? obj.modelId : base.modelId,
     background: obj.background ?? base.background,
     layers: Array.isArray(obj.layers) ? (obj.layers as Layer[]) : [],
+    // Older saved designs predate this flag — default to showing the camera.
+    showCamera: typeof obj.showCamera === "boolean" ? obj.showCamera : true,
   };
 }
 
