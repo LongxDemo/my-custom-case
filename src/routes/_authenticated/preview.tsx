@@ -106,8 +106,7 @@ function PreviewPage() {
           <CaseSilhouette
             ratio={model.ratio}
             camera={design.showCamera ? "lenses" : "blank"}
-            className="relative max-h-full"
-            style={{ width: "min(62vw, 240px)" }}
+            className="relative h-full w-auto max-w-[min(62vw,240px)]"
           >
             <CaseArtwork design={design} />
           </CaseSilhouette>
@@ -179,10 +178,9 @@ function SegmentedToggle({ view, onChange }: { view: View; onChange: (v: View) =
 function PhoneFront({ colorCss, ratio }: { colorCss: string; ratio: number }) {
   return (
     <div
-      className="relative max-h-full"
+      className="relative h-full w-auto max-w-[min(62vw,240px)]"
       style={{
         aspectRatio: String(ratio),
-        width: "min(62vw, 240px)",
         filter: "drop-shadow(0 22px 30px rgba(0,0,0,0.5))",
       }}
     >

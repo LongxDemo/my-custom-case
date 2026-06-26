@@ -458,8 +458,7 @@ function StudioPage() {
           ref={canvasRef}
           ratio={model.ratio}
           camera={design.showCamera ? "lenses" : "blank"}
-          className="max-h-full"
-          style={{ width: "min(62vw, 230px)" }}
+          className="h-full w-auto max-w-[min(62vw,230px)]"
         >
           <CaseArtwork
             design={design}
