@@ -131,7 +131,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="flex min-h-[100dvh] w-full items-center justify-center">
+        <div className="flex h-[100dvh] w-full items-center justify-center overflow-hidden">
           <div className="phone-frame">
             {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
             <Outlet />
