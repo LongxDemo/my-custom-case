@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "deploy": "wrangler deploy --compatibility-date 2026-06-25"
+    "deploy": "wrangler deploy --compatibility-date 2026-06-25",
+    "cap:sync": "cap sync",
+    "ios:add": "cap add ios",
+    "ios:open": "cap open ios"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -67,6 +70,9 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.3.2",
     "@types/node": "^22.16.5",
